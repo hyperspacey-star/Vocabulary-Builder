@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Vocabulary Master</title>
+    <title>3-Phase Vocabulary Master</title>
     <style>
         :root {
             --primary: #8E44AD;
@@ -18,180 +18,104 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            margin: 0;
-            padding: 20px;
+            margin: 0; padding: 20px;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
+            display: flex; justify-content: center; align-items: flex-start;
             color: var(--dark);
         }
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
+            background: white; padding: 30px; border-radius: 15px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            width: 100%;
-            max-width: 800px;
-            box-sizing: border-box;
+            width: 100%; max-width: 800px;
         }
         h1, h2, h3 { text-align: center; color: var(--dark); margin-top: 0; }
         
-        select {
-            width: 100%;
-            padding: 12px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: 2px solid var(--border);
-            margin: 15px 0;
-        }
-
+        select { width: 100%; padding: 12px; font-size: 16px; border-radius: 8px; border: 2px solid var(--border); margin: 15px 0; }
         .phase-container { display: none; }
-        .active-phase { display: block; }
+        .active-phase { display: block; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         .word-bank {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            justify-content: center;
-            background: var(--light);
-            padding: 15px;
-            border-radius: 10px;
-            margin: 20px 0;
-            border: 2px dashed var(--border);
-            position: sticky;
-            bottom: 10px;
-            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+            background: var(--light); padding: 15px; border-radius: 10px; margin: 20px 0;
+            border: 2px dashed var(--border); position: sticky; bottom: 10px;
         }
 
         .bank-word {
-            font-size: 18px;
-            font-weight: bold;
-            color: white;
-            background: var(--secondary);
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            border: none;
-            transition: transform 0.1s, opacity 0.2s;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            font-size: 18px; font-weight: bold; color: white; background: var(--secondary);
+            padding: 8px 16px; border-radius: 20px; cursor: pointer; border: none;
+            transition: all 0.2s;
         }
         .bank-word:hover { transform: translateY(-2px); }
-        .bank-word:active { transform: translateY(0); }
-        .bank-word.used { opacity: 0.3; pointer-events: none; }
+        .bank-word.used { opacity: 0.3; pointer-events: none; background: var(--success); }
+        
+        .wrong-shake { animation: shake 0.4s; background: var(--danger) !important; }
+        @keyframes shake { 0%, 100% {transform: translateX(0);} 25% {transform: translateX(-5px);} 75% {transform: translateX(5px);} }
 
         .blank-slot {
-            display: inline-block;
-            min-width: 120px;
-            height: 30px;
-            border-bottom: 3px solid var(--dark);
-            margin: 0 5px;
-            cursor: pointer;
-            text-align: center;
-            font-weight: bold;
-            color: var(--primary);
-            font-size: 18px;
-            vertical-align: bottom;
-            transition: all 0.2s;
-            padding: 0 10px;
+            display: inline-block; min-width: 120px; height: 30px; border-bottom: 3px solid var(--dark);
+            margin: 0 5px; cursor: pointer; text-align: center; font-weight: bold;
+            color: var(--primary); font-size: 18px; vertical-align: bottom; transition: all 0.2s;
         }
-        .blank-slot:hover { border-bottom-color: var(--secondary); background: #f0f8ff; }
-        .blank-slot.selected {
-            border-bottom-color: var(--active-blank);
-            background: #fcf3cf;
-            animation: pulse 1s infinite;
-        }
+        .blank-slot.selected { border-bottom-color: var(--active-blank); background: #fcf3cf; box-shadow: 0 4px 10px rgba(241,196,15,0.3); }
         .blank-slot.correct { border-bottom-color: var(--success); color: var(--success); pointer-events: none; }
-        .blank-slot.incorrect { border-bottom-color: var(--danger); color: var(--danger); }
 
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4); }
-            70% { box-shadow: 0 0 0 10px rgba(241, 196, 15, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0); }
+        .row-item {
+            background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 10px;
+            border-left: 5px solid var(--primary); font-size: 18px;
+            display: flex; align-items: center; justify-content: space-between; gap: 15px;
         }
-
-        .definition-row {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 10px;
-            border-left: 5px solid var(--primary);
-            font-size: 18px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .story-text {
-            font-size: 20px;
-            line-height: 2.2;
-            padding: 20px;
-            background: #fff;
-            border: 2px solid var(--border);
-            border-radius: 10px;
-        }
-
-        .btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: bold;
-            display: block;
-            margin: 20px auto 0 auto;
-            transition: background 0.2s;
-        }
-        .btn:hover { background: #732d91; }
         
-        .instructions {
-            text-align: center;
-            font-size: 16px;
-            color: #555;
-            margin-bottom: 20px;
-            background: #e8f4f8;
-            padding: 10px;
-            border-radius: 8px;
+        .audio-btn {
+            background: var(--primary); color: white; border: none; border-radius: 50%;
+            width: 40px; height: 40px; font-size: 18px; cursor: pointer; flex-shrink: 0;
         }
+
+        .story-text { font-size: 20px; line-height: 2.2; padding: 20px; background: #fff; border: 2px solid var(--border); border-radius: 10px; }
+        .blank-wrapper { display: inline-flex; align-items: center; }
+        .hint-btn { background: #F1C40F; border: none; border-radius: 5px; padding: 2px 8px; font-size: 14px; cursor: pointer; margin-left: 5px; animation: fadeIn 0.3s; }
+
+        .btn { background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 8px; cursor: pointer; font-size: 18px; font-weight: bold; display: block; margin: 20px auto 0 auto; }
+        .btn:hover { background: #732d91; }
+        .instructions { text-align: center; font-size: 16px; color: #555; margin-bottom: 20px; background: #e8f4f8; padding: 10px; border-radius: 8px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>🧠 Vocabulary Master</h1>
+    <h1>🧠 3-Phase Vocabulary</h1>
     
-    <!-- SETUP AREA -->
     <div id="setupArea" class="active-phase">
         <p style="text-align: center;">Select this week's vocabulary to begin.</p>
         <select id="weekSelect"></select>
-        <button class="btn" onclick="startPhase1()">Start Warm-Up</button>
+        <button class="btn" onclick="startPhase1()">Start Phase 1: Definitions</button>
     </div>
 
-    <!-- PHASE 1: DEFINITIONS -->
+    <!-- PHASE 1 -->
     <div id="phase1Area" class="phase-container">
-        <h2>Phase 1: Definition Match</h2>
-        <div class="instructions">
-            <strong>How to play:</strong> Tap an empty blank line, then tap the matching word from the bank below.
-        </div>
-        <div id="definitionsContainer"></div>
+        <h2>Phase 1: Definitions</h2>
+        <div class="instructions">Tap an empty line, then tap the matching word. Use the audio buttons to hear the word!</div>
+        <div id="p1Container"></div>
         <div id="wordBank1" class="word-bank"></div>
-        <button class="btn" id="checkPhase1Btn" onclick="checkAnswers(1)">Check Answers</button>
     </div>
 
-    <!-- PHASE 2: STORY -->
+    <!-- PHASE 2 -->
     <div id="phase2Area" class="phase-container">
-        <h2>Phase 2: Friday Quiz Rehearsal</h2>
-        <div class="instructions">
-            <strong>How to play:</strong> Read the story. Tap a blank line to select it, then tap the word that belongs there.
-        </div>
-        <div id="storyContainer" class="story-text"></div>
+        <h2>Phase 2: Sentences</h2>
+        <div class="instructions">Fill in the missing word for each sentence.</div>
+        <div id="p2Container"></div>
         <div id="wordBank2" class="word-bank"></div>
-        <button class="btn" id="checkPhase2Btn" onclick="checkAnswers(2)">Grade Quiz ➡️</button>
+    </div>
+
+    <!-- PHASE 3 -->
+    <div id="phase3Area" class="phase-container">
+        <h2>Phase 3: Friday Quiz</h2>
+        <div class="instructions">Complete the paragraph. If you get stuck on a blank, a hint button will appear!</div>
+        <div id="p3Container" class="story-text"></div>
+        <div id="wordBank3" class="word-bank"></div>
     </div>
     
-    <!-- END SCREEN -->
+    <!-- END -->
     <div id="endArea" class="phase-container">
         <h2>🎉 Week Mastered! 🎉</h2>
         <p style="text-align: center; font-size: 18px;">Abigail is ready for her Friday Quiz!</p>
@@ -201,107 +125,129 @@
 
 <script>
 // ==========================================
-// 📚 WEEKLY DATA (UPDATE THIS SECTION)
+// 📚 WEEKLY DATA 
 // ==========================================
 const weeklyData = {
     "Week 1: Wizard of Oz (Part 1)": {
-        definitions: [
-            { word: "perched", hint: "sitting high up or resting on an edge" },
-            { word: "puzzled", hint: "confused because you don't understand something" },
-            { word: "mistaken", hint: "wrong in your opinion or judgment" },
-            { word: "tedious", hint: "too long, slow, or dull; boring" },
-            { word: "obliged", hint: "feeling thankful or grateful" }
+        audioFolder: "abigail_vocab_week1",
+        words: [
+            { word: "perched", def: "sitting high up or resting on an edge", sentence: "The bird was _ on the branch." },
+            { word: "puzzled", def: "confused because you don't understand something", sentence: "I was very _ by the difficult math problem." },
+            { word: "mistaken", def: "wrong in your opinion or judgment", sentence: "If you think I broke the vase, you are _." },
+            { word: "tedious", def: "too long, slow, or dull; boring", sentence: "Sorting the beads by color was a very _ job." },
+            { word: "obliged", def: "feeling thankful or grateful", sentence: "I am much _ to you for helping me." }
         ],
         story: "As Dorothy walked on the yellow brick road, she saw the figure of a man _perched_ above the corn plants. She thought it spoke to her and was very _puzzled_! How could a scarecrow talk?! She must be _mistaken_. When he spoke again, she knew she hadn't made a mistake. \"Excuse me,\" he said. \"Would you mind helping me down? It is very _tedious_ and boring hanging around here in the corn.\" Dorothy helped him down, and he said, \"Ah, that feels better! I am much _obliged_ to you for helping me!\""
-    },
-    "Week 1: Wizard of Oz (Part 2)": {
-        definitions: [
-            { word: "representing", hint: "standing in for someone or something" },
-            { word: "confidentially", hint: "done as a secret" },
-            { word: "earnestly", hint: "done in a serious and honest way" },
-            { word: "tread", hint: "to step or walk on" },
-            { word: "whisked", hint: "moved quickly" }
-        ],
-        story: "He continued to speak, quietly and _confidentially_. \"It's even worse because I don't scare the crows.\" \"Are you all right?\" Dorothy asked _earnestly_ as she saw him stumble. She thought he might _tread_ on her feet, since he was so wobbly. \"Oh, fine,\" he replied. \"I am so happy to be down! I don't like _representing_ something scary to crows!\" He _whisked_ up a bunch of straw from the ground, stuffed it in his shirt, and off they went to the Emerald City."
     }
 };
 
-// ==========================================
-// ⚙️ GAME LOGIC
-// ==========================================
 let currentWeek = "";
 let selectedBlank = null;
+let wordsRemaining = 0;
+let mistakeTracker = {}; // Tracks mistakes per blank ID
+const audioPlayer = new Audio();
 
 window.onload = function() {
     const select = document.getElementById('weekSelect');
-    for (let week in weeklyData) {
-        let option = document.createElement('option');
-        option.value = week;
-        option.innerText = week;
-        select.appendChild(option);
-    }
+    for (let week in weeklyData) { select.appendChild(new Option(week, week)); }
 };
+
+function playAudio(wordString) {
+    const data = weeklyData[currentWeek];
+    // Find index to prepend Python's 01_ 02_ naming convention
+    const wordIndex = data.words.findIndex(w => w.word.toLowerCase() === wordString.toLowerCase());
+    let prefix = (wordIndex + 1 < 10) ? '0' + (wordIndex + 1) : (wordIndex + 1);
+    
+    let path = `audio/${data.audioFolder}/${prefix}_${wordString.toLowerCase()}.mp3`;
+    audioPlayer.src = path;
+    audioPlayer.play().catch(e => console.log("Ensure audio generation script was run:", e));
+}
 
 function switchPhase(showId) {
     document.querySelectorAll('.phase-container, .active-phase').forEach(el => {
-        el.classList.remove('active-phase');
-        el.classList.add('phase-container');
+        el.classList.remove('active-phase'); el.classList.add('phase-container');
     });
     document.getElementById(showId).classList.add('active-phase');
 }
 
+// --- PHASE 1: DEFINITIONS ---
 function startPhase1() {
     currentWeek = document.getElementById('weekSelect').value;
     const data = weeklyData[currentWeek];
+    let shuffledWords = [...data.words].sort(() => 0.5 - Math.random());
+    wordsRemaining = data.words.length;
     
-    // Shuffle definitions
-    let shuffledDefs = [...data.definitions].sort(() => 0.5 - Math.random());
+    const container = document.getElementById('p1Container');
+    container.innerHTML = '';
     
-    const defContainer = document.getElementById('definitionsContainer');
-    defContainer.innerHTML = '';
-    
-    shuffledDefs.forEach(item => {
-        defContainer.innerHTML += `
-            <div class="definition-row">
-                <span>🤔 ${item.hint}</span>
-                <span class="blank-slot phase1-blank" data-answer="${item.word}"></span>
+    shuffledWords.forEach((item, index) => {
+        container.innerHTML += `
+            <div class="row-item">
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <button class="audio-btn" onclick="playAudio('${item.word}')">🔊</button>
+                    <span>${item.def}</span>
+                </div>
+                <span class="blank-slot phase1-blank" id="p1_blank_${index}" data-answer="${item.word}"></span>
             </div>
         `;
     });
 
-    buildWordBank(data.definitions.map(d => d.word), 'wordBank1', 'phase1-blank');
+    buildWordBank(data.words.map(d => d.word), 'wordBank1', 'phase1-blank');
     setupBlankListeners('phase1-blank');
     switchPhase('phase1Area');
 }
 
+// --- PHASE 2: SENTENCES ---
 function startPhase2() {
     const data = weeklyData[currentWeek];
-    const storyContainer = document.getElementById('storyContainer');
+    let shuffledWords = [...data.words].sort(() => 0.5 - Math.random());
+    wordsRemaining = data.words.length;
     
-    // Parse Story blanks
-    let parsedStory = data.story.replace(/_([a-zA-Z]+)_/g, function(match, word) {
-        return `<span class="blank-slot phase2-blank" data-answer="${word.toLowerCase()}"></span>`;
+    const container = document.getElementById('p2Container');
+    container.innerHTML = '';
+    
+    shuffledWords.forEach((item, index) => {
+        let sentenceWithBlank = item.sentence.replace('_', `<span class="blank-slot phase2-blank" id="p2_blank_${index}" data-answer="${item.word}"></span>`);
+        container.innerHTML += `<div class="row-item">${sentenceWithBlank}</div>`;
     });
-    
-    storyContainer.innerHTML = parsedStory;
-    
-    buildWordBank(data.definitions.map(d => d.word), 'wordBank2', 'phase2-blank');
+
+    buildWordBank(data.words.map(d => d.word), 'wordBank2', 'phase2-blank');
     setupBlankListeners('phase2-blank');
     switchPhase('phase2Area');
 }
 
+// --- PHASE 3: STORY PARAGRAPH ---
+function startPhase3() {
+    const data = weeklyData[currentWeek];
+    wordsRemaining = data.words.length;
+    mistakeTracker = {}; // Reset tracking for hints
+    
+    let blankCounter = 0;
+    let parsedStory = data.story.replace(/_([a-zA-Z]+)_/g, function(match, word) {
+        let def = data.words.find(w => w.word.toLowerCase() === word.toLowerCase()).def;
+        let id = `p3_blank_${blankCounter++}`;
+        return `<span class="blank-wrapper">
+                    <span class="blank-slot phase3-blank" id="${id}" data-answer="${word.toLowerCase()}" data-def="${def}"></span>
+                    <button class="hint-btn" id="hint_${id}" style="display:none;" onclick="alert('Definition: ${def}')">💡 Hint</button>
+                </span>`;
+    });
+    
+    document.getElementById('p3Container').innerHTML = parsedStory;
+    buildWordBank(data.words.map(d => d.word), 'wordBank3', 'phase3-blank');
+    setupBlankListeners('phase3-blank');
+    switchPhase('phase3Area');
+}
+
+// --- GAMEPLAY MECHANICS ---
 function buildWordBank(words, bankId, blankClass) {
     const bank = document.getElementById(bankId);
     bank.innerHTML = '';
-    
-    // Shuffle words for the bank
     let shuffledWords = [...words].sort(() => 0.5 - Math.random());
     
     shuffledWords.forEach(word => {
         let btn = document.createElement('button');
-        btn.className = 'bank-word';
-        btn.innerText = word;
-        btn.onclick = () => placeWord(word, btn, blankClass);
+        btn.className = 'bank-word'; btn.innerText = word;
+        btn.onclick = () => evaluateChoice(word, btn, blankClass);
         bank.appendChild(btn);
     });
 }
@@ -309,85 +255,48 @@ function buildWordBank(words, bankId, blankClass) {
 function setupBlankListeners(blankClass) {
     document.querySelectorAll(`.${blankClass}`).forEach(blank => {
         blank.onclick = function() {
-            // Remove selection from all others
+            if (this.classList.contains('correct')) return; // Locked in
             document.querySelectorAll(`.${blankClass}`).forEach(b => b.classList.remove('selected'));
-            
-            // If clicking a filled blank, return the word to the bank
-            if (this.innerText !== "") {
-                returnWordToBank(this.innerText, this.parentElement.parentElement.id === 'phase1Area' ? 'wordBank1' : 'wordBank2');
-                this.innerText = "";
-                this.classList.remove('incorrect');
-            }
-            
-            // Select this blank
             this.classList.add('selected');
             selectedBlank = this;
         };
     });
 }
 
-function placeWord(word, btnElement, blankClass) {
-    if (!selectedBlank) {
-        alert("Please tap an empty blank line first!");
-        return;
-    }
+function evaluateChoice(selectedWord, btnElement, phaseClass) {
+    if (!selectedBlank) { alert("Please tap an empty blank line first!"); return; }
     
-    // Place word in blank
-    selectedBlank.innerText = word;
-    selectedBlank.classList.remove('selected', 'incorrect');
-    selectedBlank = null;
+    let correctAnswer = selectedBlank.dataset.answer.toLowerCase();
     
-    // Disable word in bank
-    btnElement.classList.add('used');
-}
-
-function returnWordToBank(word, bankId) {
-    document.querySelectorAll(`#${bankId} .bank-word`).forEach(btn => {
-        if (btn.innerText === word) {
-            btn.classList.remove('used');
-        }
-    });
-}
-
-function checkAnswers(phaseNum) {
-    const blankClass = phaseNum === 1 ? 'phase1-blank' : 'phase2-blank';
-    const blanks = document.querySelectorAll(`.${blankClass}`);
-    let allCorrect = true;
-    let allFilled = true;
-
-    blanks.forEach(blank => {
-        if (blank.innerText === "") {
-            allFilled = false;
-        } else if (blank.innerText === blank.dataset.answer) {
-            blank.classList.add('correct');
-        } else {
-            blank.classList.add('incorrect');
-            allCorrect = false;
-        }
-    });
-
-    if (!allFilled) {
-        alert("Please fill in all the blanks before checking!");
-        return;
-    }
-
-    if (allCorrect) {
-        if (phaseNum === 1) {
-            alert("Perfect! Now let's try placing them in the story context.");
-            startPhase2();
-        } else {
-            switchPhase('endArea');
+    if (selectedWord.toLowerCase() === correctAnswer) {
+        // Correct Choice
+        selectedBlank.innerText = selectedWord;
+        selectedBlank.classList.add('correct');
+        selectedBlank.classList.remove('selected');
+        btnElement.classList.add('used');
+        selectedBlank = null;
+        wordsRemaining--;
+        
+        if (wordsRemaining === 0) {
+            setTimeout(() => {
+                if (phaseClass === 'phase1-blank') startPhase2();
+                else if (phaseClass === 'phase2-blank') startPhase3();
+                else switchPhase('endArea');
+            }, 800);
         }
     } else {
-        alert("Some answers are incorrect. The incorrect words will be returned to the bank.");
-        // Clear incorrect answers automatically to reduce frustration
-        blanks.forEach(blank => {
-            if (blank.classList.contains('incorrect')) {
-                returnWordToBank(blank.innerText, phaseNum === 1 ? 'wordBank1' : 'wordBank2');
-                blank.innerText = "";
-                blank.classList.remove('incorrect');
-            }
-        });
+        // Incorrect Choice
+        btnElement.classList.add('wrong-shake');
+        setTimeout(() => btnElement.classList.remove('wrong-shake'), 400);
+        
+        let blankId = selectedBlank.id;
+        if (!mistakeTracker[blankId]) mistakeTracker[blankId] = 0;
+        mistakeTracker[blankId]++;
+        
+        // Trigger specific hint logic for Phase 3
+        if (phaseClass === 'phase3-blank' && mistakeTracker[blankId] >= 2) {
+            document.getElementById(`hint_${blankId}`).style.display = 'inline-block';
+        }
     }
 }
 </script>
