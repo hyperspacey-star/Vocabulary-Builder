@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vocabulary Master</title>
+    <style>
+        :root {
+            --primary: #8E44AD;
+            --secondary: #3498DB;
+            --success: #2ECC71;
+            --danger: #E74C3C;
+            --dark: #2C3E50;
+            --light: #ECF0F1;
+            --border: #BDC3C7;
+            --active-blank: #F1C40F;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            color: var(--dark);
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 800px;
+            box-sizing: border-box;
+        }
+        h1, h2, h3 { text-align: center; color: var(--dark); margin-top: 0; }
+        
+        select {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: 2px solid var(--border);
+            margin: 15px 0;
+        }
+
+        .phase-container { display: none; }
+        .active-phase { display: block; }
+
+        .word-bank {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            background: var(--light);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 2px dashed var(--border);
+            position: sticky;
+            bottom: 10px;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
+        }
+
+        .bank-word {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: var(--secondary);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            border: none;
+            transition: transform 0.1s, opacity 0.2s;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .bank-word:hover { transform: translateY(-2px); }
+        .bank-word:active { transform: translateY(0); }
+        .bank-word.used { opacity: 0.3; pointer-events: none; }
+
+        .blank-slot {
+            display: inline-block;
+            min-width: 120px;
+            height: 30px;
+            border-bottom: 3px solid var(--dark);
+            margin: 0 5px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 18px;
+            vertical-align: bottom;
+            transition: all 0.2s;
+            padding: 0 10px;
+        }
+        .blank-slot:hover { border-bottom-color: var(--secondary); background: #f0f8ff; }
+        .blank-slot.selected {
+            border-bottom-color: var(--active-blank);
+            background: #fcf3cf;
+            animation: pulse 1s infinite;
+        }
+        .blank-slot.correct { border-bottom-color: var(--success); color: var(--success); pointer-events: none; }
+        .blank-slot.incorrect { border-bottom-color: var(--danger); color: var(--danger); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(241, 196, 15, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(241, 196, 15, 0); }
+        }
+
+        .definition-row {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 5px solid var(--primary);
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .story-text {
+            font-size: 20px;
+            line-height: 2.2;
+            padding: 20px;
+            background: #fff;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            display: block;
+            margin: 20px auto 0 auto;
+            transition: background 0.2s;
+        }
+        .btn:hover { background: #732d91; }
+        
+        .instructions {
+            text-align: center;
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+            background: #e8f4f8;
+            padding: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🧠 Vocabulary Master</h1>
+    
+    <!-- SETUP AREA -->
+    <div id="setupArea" class="active-phase">
+        <p style="text-align: center;">Select this week's vocabulary to begin.</p>
+        <select id="weekSelect"></select>
+        <button class="btn" onclick="startPhase1()">Start Warm-Up</button>
+    </div>
+
+    <!-- PHASE 1: DEFINITIONS -->
+    <div id="phase1Area" class="phase-container">
+        <h2>Phase 1: Definition Match</h2>
+        <div class="instructions">
+            <strong>How to play:</strong> Tap an empty blank line, then tap the matching word from the bank below.
+        </div>
+        <div id="definitionsContainer"></div>
+        <div id="wordBank1" class="word-bank"></div>
+        <button class="btn" id="checkPhase1Btn" onclick="checkAnswers(1)">Check Answers</button>
+    </div>
+
+    <!-- PHASE 2: STORY -->
+    <div id="phase2Area" class="phase-container">
+        <h2>Phase 2: Friday Quiz Rehearsal</h2>
+        <div class="instructions">
+            <strong>How to play:</strong> Read the story. Tap a blank line to select it, then tap the word that belongs there.
+        </div>
+        <div id="storyContainer" class="story-text"></div>
+        <div id="wordBank2" class="word-bank"></div>
+        <button class="btn" id="checkPhase2Btn" onclick="checkAnswers(2)">Grade Quiz ➡️</button>
+    </div>
+    
+    <!-- END SCREEN -->
+    <div id="endArea" class="phase-container">
+        <h2>🎉 Week Mastered! 🎉</h2>
+        <p style="text-align: center; font-size: 18px;">Abigail is ready for her Friday Quiz!</p>
+        <button class="btn" onclick="location.reload()">Choose Another Week</button>
+    </div>
+</div>
+
+<script>
+// ==========================================
+// 📚 WEEKLY DATA (UPDATE THIS SECTION)
+// ==========================================
+const weeklyData = {
+    "Week 1: Wizard of Oz (Part 1)": {
+        definitions: [
+            { word: "perched", hint: "sitting high up or resting on an edge" },
+            { word: "puzzled", hint: "confused because you don't understand something" },
+            { word: "mistaken", hint: "wrong in your opinion or judgment" },
+            { word: "tedious", hint: "too long, slow, or dull; boring" },
+            { word: "obliged", hint: "feeling thankful or grateful" }
+        ],
+        story: "As Dorothy walked on the yellow brick road, she saw the figure of a man _perched_ above the corn plants. She thought it spoke to her and was very _puzzled_! How could a scarecrow talk?! She must be _mistaken_. When he spoke again, she knew she hadn't made a mistake. \"Excuse me,\" he said. \"Would you mind helping me down? It is very _tedious_ and boring hanging around here in the corn.\" Dorothy helped him down, and he said, \"Ah, that feels better! I am much _obliged_ to you for helping me!\""
+    },
+    "Week 1: Wizard of Oz (Part 2)": {
+        definitions: [
+            { word: "representing", hint: "standing in for someone or something" },
+            { word: "confidentially", hint: "done as a secret" },
+            { word: "earnestly", hint: "done in a serious and honest way" },
+            { word: "tread", hint: "to step or walk on" },
+            { word: "whisked", hint: "moved quickly" }
+        ],
+        story: "He continued to speak, quietly and _confidentially_. \"It's even worse because I don't scare the crows.\" \"Are you all right?\" Dorothy asked _earnestly_ as she saw him stumble. She thought he might _tread_ on her feet, since he was so wobbly. \"Oh, fine,\" he replied. \"I am so happy to be down! I don't like _representing_ something scary to crows!\" He _whisked_ up a bunch of straw from the ground, stuffed it in his shirt, and off they went to the Emerald City."
+    }
+};
+
+// ==========================================
+// ⚙️ GAME LOGIC
+// ==========================================
+let currentWeek = "";
+let selectedBlank = null;
+
+window.onload = function() {
+    const select = document.getElementById('weekSelect');
+    for (let week in weeklyData) {
+        let option = document.createElement('option');
+        option.value = week;
+        option.innerText = week;
+        select.appendChild(option);
+    }
+};
+
+function switchPhase(showId) {
+    document.querySelectorAll('.phase-container, .active-phase').forEach(el => {
+        el.classList.remove('active-phase');
+        el.classList.add('phase-container');
+    });
+    document.getElementById(showId).classList.add('active-phase');
+}
+
+function startPhase1() {
+    currentWeek = document.getElementById('weekSelect').value;
+    const data = weeklyData[currentWeek];
+    
+    // Shuffle definitions
+    let shuffledDefs = [...data.definitions].sort(() => 0.5 - Math.random());
+    
+    const defContainer = document.getElementById('definitionsContainer');
+    defContainer.innerHTML = '';
+    
+    shuffledDefs.forEach(item => {
+        defContainer.innerHTML += `
+            <div class="definition-row">
+                <span>🤔 ${item.hint}</span>
+                <span class="blank-slot phase1-blank" data-answer="${item.word}"></span>
+            </div>
+        `;
+    });
+
+    buildWordBank(data.definitions.map(d => d.word), 'wordBank1', 'phase1-blank');
+    setupBlankListeners('phase1-blank');
+    switchPhase('phase1Area');
+}
+
+function startPhase2() {
+    const data = weeklyData[currentWeek];
+    const storyContainer = document.getElementById('storyContainer');
+    
+    // Parse Story blanks
+    let parsedStory = data.story.replace(/_([a-zA-Z]+)_/g, function(match, word) {
+        return `<span class="blank-slot phase2-blank" data-answer="${word.toLowerCase()}"></span>`;
+    });
+    
+    storyContainer.innerHTML = parsedStory;
+    
+    buildWordBank(data.definitions.map(d => d.word), 'wordBank2', 'phase2-blank');
+    setupBlankListeners('phase2-blank');
+    switchPhase('phase2Area');
+}
+
+function buildWordBank(words, bankId, blankClass) {
+    const bank = document.getElementById(bankId);
+    bank.innerHTML = '';
+    
+    // Shuffle words for the bank
+    let shuffledWords = [...words].sort(() => 0.5 - Math.random());
+    
+    shuffledWords.forEach(word => {
+        let btn = document.createElement('button');
+        btn.className = 'bank-word';
+        btn.innerText = word;
+        btn.onclick = () => placeWord(word, btn, blankClass);
+        bank.appendChild(btn);
+    });
+}
+
+function setupBlankListeners(blankClass) {
+    document.querySelectorAll(`.${blankClass}`).forEach(blank => {
+        blank.onclick = function() {
+            // Remove selection from all others
+            document.querySelectorAll(`.${blankClass}`).forEach(b => b.classList.remove('selected'));
+            
+            // If clicking a filled blank, return the word to the bank
+            if (this.innerText !== "") {
+                returnWordToBank(this.innerText, this.parentElement.parentElement.id === 'phase1Area' ? 'wordBank1' : 'wordBank2');
+                this.innerText = "";
+                this.classList.remove('incorrect');
+            }
+            
+            // Select this blank
+            this.classList.add('selected');
+            selectedBlank = this;
+        };
+    });
+}
+
+function placeWord(word, btnElement, blankClass) {
+    if (!selectedBlank) {
+        alert("Please tap an empty blank line first!");
+        return;
+    }
+    
+    // Place word in blank
+    selectedBlank.innerText = word;
+    selectedBlank.classList.remove('selected', 'incorrect');
+    selectedBlank = null;
+    
+    // Disable word in bank
+    btnElement.classList.add('used');
+}
+
+function returnWordToBank(word, bankId) {
+    document.querySelectorAll(`#${bankId} .bank-word`).forEach(btn => {
+        if (btn.innerText === word) {
+            btn.classList.remove('used');
+        }
+    });
+}
+
+function checkAnswers(phaseNum) {
+    const blankClass = phaseNum === 1 ? 'phase1-blank' : 'phase2-blank';
+    const blanks = document.querySelectorAll(`.${blankClass}`);
+    let allCorrect = true;
+    let allFilled = true;
+
+    blanks.forEach(blank => {
+        if (blank.innerText === "") {
+            allFilled = false;
+        } else if (blank.innerText === blank.dataset.answer) {
+            blank.classList.add('correct');
+        } else {
+            blank.classList.add('incorrect');
+            allCorrect = false;
+        }
+    });
+
+    if (!allFilled) {
+        alert("Please fill in all the blanks before checking!");
+        return;
+    }
+
+    if (allCorrect) {
+        if (phaseNum === 1) {
+            alert("Perfect! Now let's try placing them in the story context.");
+            startPhase2();
+        } else {
+            switchPhase('endArea');
+        }
+    } else {
+        alert("Some answers are incorrect. The incorrect words will be returned to the bank.");
+        // Clear incorrect answers automatically to reduce frustration
+        blanks.forEach(blank => {
+            if (blank.classList.contains('incorrect')) {
+                returnWordToBank(blank.innerText, phaseNum === 1 ? 'wordBank1' : 'wordBank2');
+                blank.innerText = "";
+                blank.classList.remove('incorrect');
+            }
+        });
+    }
+}
+</script>
+</body>
+</html>
