@@ -119,7 +119,7 @@
     <div id="endArea" class="phase-container">
         <h2>🎉 Week Mastered! 🎉</h2>
         <p style="text-align: center; font-size: 18px;">Abigail is ready for her Friday Quiz!</p>
-        <button class="btn" onclick="location.reload()">Choose Another Week</button>
+        <button class="btn" onclick="location.reload()">Return Home</button>
     </div>
 </div>
 
@@ -128,32 +128,21 @@
 // 📚 WEEKLY DATA 
 // ==========================================
 const weeklyData = {
-    "Week 2: The Volcano Explorer": {
-        audioFolder: "abigail_vocab_week2",
+    "Week 3: The Brave Knight": {
+        audioFolder: "abigail_vocab_week3",
         words: [
-            { word: "scalding", def: "burning; very hot", sentence: "The soup was so _ that I had to wait ten minutes to eat it." },
-            { word: "structure", def: "something built or constructed", sentence: "The Eiffel Tower is a famous metal _ in Paris." },
-            { word: "boundary", def: "the limit of an area", sentence: "The wooden fence marks the _ between our yard and the neighbor's." },
-            { word: "chamber", def: "an enclosed space", sentence: "The king locked the treasure inside a hidden secret _." },
-            { word: "global", def: "worldwide", sentence: "The internet has created a _ community where people from all over the world can connect." },
-            { word: "extinct", def: "having ceased erupting; no longer alive", sentence: "Dinosaurs are an _ species that lived millions of years ago." },
-            { word: "subdivide", def: "to divide into parts", sentence: "We decided to _ the giant pizza into eight equal slices." },
-            { word: "buckle", def: "to bend, curl, or give way suddenly", sentence: "The heavy snow caused the old roof to _ under the weight." },
-            { word: "interior", def: "relating to what is inside", sentence: "The _ of the cave was dark, damp, and full of bats." },
-            { word: "dormant", def: "inactive; asleep", sentence: "The volcano is currently _, but scientists say it might wake up one day." }
+            { word: "dismay", def: "sudden loss of courage or hope; shock", sentence: "To my _, my ice cream fell into the dirt." },
+            { word: "hail", def: "pellets of frozen rain", sentence: "The freezing _ dented the roof of the car." },
+            { word: "plea", def: "an urgent request", sentence: "The puppy made a _ for a treat by whining at the door." },
+            { word: "likewise", def: "in the same way; also", sentence: "She loves to read, and her brother _ enjoys a good book." },
+            { word: "deceive", def: "to make someone believe what is not true", sentence: "The tricky magician used an illusion to _ the audience." },
+            { word: "ragamuffin", def: "a person in ragged, dirty clothes", sentence: "After playing in the mud, he looked like a little _." },
+            { word: "valiant", def: "showing courage or determination", sentence: "The hero made a _ effort to save the village." },
+            { word: "resolve", def: "to settle or find a solution to", sentence: "We need to _ our disagreement before we can play." },
+            { word: "nimble", def: "quick and light in movement", sentence: "The _ cat jumped onto the high fence with ease." },
+            { word: "contemptuously", def: "in a way that shows deep hatred or disapproval", sentence: "The villain laughed _ at the hero's plan." }
         ],
-        story: "Deep in the remote jungle, explorers found an ancient stone _structure_. It stood just beyond the _boundary_ of the mapped territory. They stepped into the _interior_ and found a massive, echoey _chamber_. Suddenly, the floor began to _buckle_ under their boots, revealing a hidden pool of _scalding_ water beneath them! They realized this wasn't just a ruin; it was built inside a _dormant_ volcano that clearly wasn't _extinct_ yet. The leader quickly decided to _subdivide_ the team so they could search for an exit faster, hoping to share their amazing discovery on a _global_ news network once they escaped."
-    },
-    "Week 1: Wizard of Oz (Part 1)": {
-        audioFolder: "abigail_vocab_week1",
-        words: [
-            { word: "perched", def: "sitting high up or resting on an edge", sentence: "The bird was _ on the branch." },
-            { word: "puzzled", def: "confused because you don't understand something", sentence: "I was very _ by the difficult math problem." },
-            { word: "mistaken", def: "wrong in your opinion or judgment", sentence: "If you think I broke the vase, you are _." },
-            { word: "tedious", def: "too long, slow, or dull; boring", sentence: "Sorting the beads by color was a very _ job." },
-            { word: "obliged", def: "feeling thankful or grateful", sentence: "I am much _ to you for helping me." }
-        ],
-        story: "As Dorothy walked on the yellow brick road, she saw the figure of a man _perched_ above the corn plants. She thought it spoke to her and was very _puzzled_! How could a scarecrow talk?! She must be _mistaken_. When he spoke again, she knew she hadn't made a mistake. \"Excuse me,\" he said. \"Would you mind helping me down? It is very _tedious_ and boring hanging around here in the corn.\" Dorothy helped him down, and he said, \"Ah, that feels better! I am much _obliged_ to you for helping me!\""
+        story: "Once upon a time, a brave but small knight named Sir Leo saw a poor _ragamuffin_ crying in the village square. To his _dismay_, a wicked sorcerer had stolen the town's food supply! Leo made a _valiant_ promise to get it back. He marched to the sorcerer's tower, where the villain looked down _contemptuously_ and cast a spell to make freezing _hail_ fall from the sky. Leo used his _nimble_ footwork to dodge the ice chunks. \"I hear your _plea_ for food!\" the sorcerer sneered, trying to _deceive_ the knight with fake bread. But Leo was too smart. He used his sword to shatter the illusion, and with great courage, he managed to _resolve_ the conflict by destroying the magic wand. The villagers cheered, and the king _likewise_ celebrated the brave hero."
     }
 };
 
@@ -170,7 +159,6 @@ window.onload = function() {
 
 function playAudio(wordString) {
     const data = weeklyData[currentWeek];
-    // Find index to prepend Python's 01_ 02_ naming convention
     const wordIndex = data.words.findIndex(w => w.word.toLowerCase() === wordString.toLowerCase());
     let prefix = (wordIndex + 1 < 10) ? '0' + (wordIndex + 1) : (wordIndex + 1);
     
