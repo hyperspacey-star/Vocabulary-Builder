@@ -127,36 +127,64 @@
 // ==========================================
 // 📚 WEEKLY DATA 
 // ==========================================
-const week4Data = {
-    words: ["grunt", "swiftly", "opportunity", "grip", "shears", "quest", "earthly", "manage", "ill", "dreadful"],
-    definitions: [
-        { word: "grunt", text: "To make a short, low sound in the throat." },
-        { word: "swiftly", text: "Moving very fast or quickly." },
-        { word: "opportunity", text: "A good chance to do something." },
-        { word: "grip", text: "To grab and hold something tightly." },
-        { word: "shears", text: "Large scissors used for cutting plants or wool." },
-        { word: "quest", text: "A long search to find something special." },
-        { word: "earthly", text: "Relating to the earth instead of heaven or space." },
-        { word: "manage", text: "To be able to do something difficult." },
-        { word: "ill", text: "Bad, unfriendly, or hostile (often used as 'ill will')." },
-        { word: "dreadful", text: "Very bad, scary, or unpleasant." }
-    ],
-    sentences: [
-        { answer: "grunt", text: "The pig let out a loud ___ when the farmer brought its food." },
-        { answer: "swiftly", text: "The cheetah ran ___ across the field to catch its dinner." },
-        { answer: "opportunity", text: "Going to the museum was a great ___ to learn about dinosaurs." },
-        { answer: "grip", text: "Make sure you keep a tight ___ on the monkey bars so you don't fall." },
-        { answer: "shears", text: "The gardener used sharp ___ to trim the messy bushes." },
-        { answer: "quest", text: "The brave knight went on a dangerous ___ to find the lost crown." },
-        { answer: "earthly", text: "The alien wanted to learn all about our ___ customs and habits." },
-        { answer: "manage", text: "Did you ___ to finish all your homework before dinner?" },
-        { answer: "ill", text: "Even though they lost the game, the team bore no ___ will toward the winners." },
-        { answer: "dreadful", text: "The haunted house was filled with ___ noises that made us jump." }
-    ],
-    story: {
-        text: "Once upon a time, a young hero went on a long (1) ___ to find a magical flower. An evil king, who held much (2) ___ will toward the hero, sent a (3) ___ monster to stop her. Taking the (4) ___ to sneak past the beast, she used her gardening (5) ___ to cut the thick vines blocking her path. Moving (6) ___ through the forest, she had to (7) ___ to cross a roaring river by keeping a tight (8) ___ on a rope bridge. She heard a loud (9) ___ from a wild boar but bravely pressed on. Finally, she found the flower, shining brighter than any (10) ___ object she had ever seen.",
-        blanks: ["quest", "ill", "dreadful", "opportunity", "shears", "swiftly", "manage", "grip", "grunt", "earthly"]
+const weeklyData = {
+    "Week 4": {
+        audioFolder: "abigail_vocab_week4",
+        words: [
+            {
+                word: "grunt",
+                def: "To make a short, low sound in the throat.",
+                sentence: "The pig let out a loud _ when the farmer brought its food."
+            },
+            {
+                word: "swiftly",
+                def: "Moving very fast or quickly.",
+                sentence: "The cheetah ran _ across the field to catch its dinner."
+            },
+            {
+                word: "opportunity",
+                def: "A good chance to do something.",
+                sentence: "Going to the museum was a great _ to learn about dinosaurs."
+            },
+            {
+                word: "grip",
+                def: "To grab and hold something tightly.",
+                sentence: "Make sure you keep a tight _ on the monkey bars so you don't fall."
+            },
+            {
+                word: "shears",
+                def: "Large scissors used for cutting plants or wool.",
+                sentence: "The gardener used sharp _ to trim the messy bushes."
+            },
+            {
+                word: "quest",
+                def: "A long search to find something special.",
+                sentence: "The brave knight went on a dangerous _ to find the lost crown."
+            },
+            {
+                word: "earthly",
+                def: "Relating to the earth instead of heaven or space.",
+                sentence: "The alien wanted to learn all about our _ customs and habits."
+            },
+            {
+                word: "manage",
+                def: "To be able to do something difficult.",
+                sentence: "Did you _ to finish all your homework before dinner?"
+            },
+            {
+                word: "ill",
+                def: "Bad, unfriendly, or hostile (often used as 'ill will').",
+                sentence: "Even though they lost the game, the team bore no _ will toward the winners."
+            },
+            {
+                word: "dreadful",
+                def: "Very bad, scary, or unpleasant.",
+                sentence: "The haunted house was filled with _ noises that made us jump."
+            }
+        ],
+        story: "Once upon a time, a young hero went on a long _quest_ to find a magical flower. An evil king, who held much _ill_ will toward the hero, sent a _dreadful_ monster to stop her. Taking the _opportunity_ to sneak past the beast, she used her gardening _shears_ to cut the thick vines blocking her path. Moving _swiftly_ through the forest, she had to _manage_ to cross a roaring river by keeping a tight _grip_ on a rope bridge. She heard a loud _grunt_ from a wild boar but bravely pressed on. Finally, she found the flower, shining brighter than any _earthly_ object she had ever seen."
     }
+    // You can copy and paste previous weeks like "Week 3" here using the same structure
 };
 
 let currentWeek = "";
