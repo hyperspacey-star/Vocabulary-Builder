@@ -183,7 +183,7 @@ const weeklyData = {
             }
         ],
         story: "Once upon a time, a brave explorer stood by the tracks, waiting _anxiously_ for the midnight train. When the giant _locomotive_ finally arrived, she saw a _ferocious_ dragon try to _slither_ aboard the cargo car. She yelled, hoping the dragon would _comply_ with her command to stop. She had to _cling_ to the side ladder as the train started moving. Looking closely at the beast, she gasped in _recognition_; it was her old pet! She decided to _plunge_ into the cargo car to _dissuade_ him from trying to _devour_ all the king's treasure inside."
-    }
+    }, // <-- Added the missing comma right here!
     "Week 4": {
         audioFolder: "abigail_vocab_week4",
         words: [
@@ -240,13 +240,12 @@ const weeklyData = {
         ],
         story: "Once upon a time, a young hero went on a long _quest_ to find a magical flower. An evil king, who held much _ill_ will toward the hero, sent a _dreadful_ monster to stop her. Taking the _opportunity_ to sneak past the beast, she used her gardening _shears_ to cut the thick vines blocking her path. Moving _swiftly_ through the forest, she had to _manage_ to cross a roaring river by keeping a tight _grip_ on a rope bridge. She heard a loud _grunt_ from a wild boar but bravely pressed on. Finally, she found the flower, shining brighter than any _earthly_ object she had ever seen."
     }
-    // You can copy and paste previous weeks like "Week 3" here using the same structure
 };
 
 let currentWeek = "";
 let selectedBlank = null;
 let wordsRemaining = 0;
-let mistakeTracker = {}; // Tracks mistakes per blank ID
+let mistakeTracker = {}; 
 const audioPlayer = new Audio();
 
 window.onload = function() {
@@ -321,7 +320,7 @@ function startPhase2() {
 function startPhase3() {
     const data = weeklyData[currentWeek];
     wordsRemaining = data.words.length;
-    mistakeTracker = {}; // Reset tracking for hints
+    mistakeTracker = {}; 
     
     let blankCounter = 0;
     let parsedStory = data.story.replace(/_([a-zA-Z]+)_/g, function(match, word) {
@@ -394,7 +393,6 @@ function evaluateChoice(selectedWord, btnElement, phaseClass) {
         if (!mistakeTracker[blankId]) mistakeTracker[blankId] = 0;
         mistakeTracker[blankId]++;
         
-        // Trigger specific hint logic for Phase 3
         if (phaseClass === 'phase3-blank' && mistakeTracker[blankId] >= 2) {
             document.getElementById(`hint_${blankId}`).style.display = 'inline-block';
         }
