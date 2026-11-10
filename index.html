@@ -128,6 +128,62 @@
 // 📚 WEEKLY DATA 
 // ==========================================
 const weeklyData = {
+    "Week 6": {
+        audioFolder: "abigail_vocab_week6",
+        words: [
+            {
+                word: "circumnavigate",
+                def: "To sail or travel all the way around something, especially the world.",
+                sentence: "It took the crew three years to _ the entire globe."
+            },
+            {
+                word: "explorer",
+                def: "A person who travels to an unfamiliar area to learn about it.",
+                sentence: "Christopher Columbus is a famous _ who sailed the ocean."
+            },
+            {
+                word: "expedition",
+                def: "A journey or voyage taken by a group of people with a specific purpose, like exploring.",
+                sentence: "The brave sailors went on an exciting _ to find new lands."
+            },
+            {
+                word: "charting",
+                def: "Making a map of an area or planning a path.",
+                sentence: "The captain spent hours _ the newly discovered islands on his map."
+            },
+            {
+                word: "galleons",
+                def: "Large sailing ships used from the 15th to 18th centuries, especially by Spain.",
+                sentence: "The Spanish filled their huge _ with gold and silver."
+            },
+            {
+                word: "spices",
+                def: "Plant parts (like bark or seeds) used to flavor food.",
+                sentence: "The explorers traveled far to find valuable _ like cinnamon and pepper."
+            },
+            {
+                word: "compass rose",
+                def: "A circle on a map showing the principal directions (North, South, East, West).",
+                sentence: "She looked at the _ on the map to find which way was North."
+            },
+            {
+                word: "native",
+                def: "Associated with the place of a person's birth, or the original inhabitants of a place.",
+                sentence: "The explorers met the _ people who had lived there for thousands of years."
+            },
+            {
+                word: "route",
+                def: "A path or way to get from a starting point to a destination.",
+                sentence: "They tried to find a faster _ to travel to Asia."
+            },
+            {
+                word: "trade",
+                def: "The action of buying, selling, or exchanging goods.",
+                sentence: "The sailors wanted to _ their glass beads for fresh food and water."
+            }
+        ],
+        story: "The brave _explorer_ led a massive _expedition_ across the unknown sea. They planned to _circumnavigate_ the globe by finding a new _route_ to distant lands. Using a detailed _compass rose_, the navigator began _charting_ their course carefully. Their massive _galleons_ sailed for months before finally meeting the _native_ people of the island. They decided to establish a new _trade_ agreement to bring back valuable _spices_."
+    },
     "Week 5": {
         audioFolder: "abigail_vocab_week5",
         words: [
@@ -183,7 +239,7 @@ const weeklyData = {
             }
         ],
         story: "Once upon a time, a brave explorer stood by the tracks, waiting _anxiously_ for the midnight train. When the giant _locomotive_ finally arrived, she saw a _ferocious_ dragon try to _slither_ aboard the cargo car. She yelled, hoping the dragon would _comply_ with her command to stop. She had to _cling_ to the side ladder as the train started moving. Looking closely at the beast, she gasped in _recognition_; it was her old pet! She decided to _plunge_ into the cargo car to _dissuade_ him from trying to _devour_ all the king's treasure inside."
-    }, // <-- Added the missing comma right here!
+    },
     "Week 4": {
         audioFolder: "abigail_vocab_week4",
         words: [
@@ -323,11 +379,12 @@ function startPhase3() {
     mistakeTracker = {}; 
     
     let blankCounter = 0;
-    let parsedStory = data.story.replace(/_([a-zA-Z]+)_/g, function(match, word) {
-        let def = data.words.find(w => w.word.toLowerCase() === word.toLowerCase()).def;
+    let parsedStory = data.story.replace(/_([a-zA-Z\s]+)_/g, function(match, word) {
+        let defObj = data.words.find(w => w.word.toLowerCase() === word.trim().toLowerCase());
+        let def = defObj ? defObj.def : "Definition not found";
         let id = `p3_blank_${blankCounter++}`;
         return `<span class="blank-wrapper">
-                    <span class="blank-slot phase3-blank" id="${id}" data-answer="${word.toLowerCase()}" data-def="${def}"></span>
+                    <span class="blank-slot phase3-blank" id="${id}" data-answer="${word.trim().toLowerCase()}" data-def="${def}"></span>
                     <button class="hint-btn" id="hint_${id}" style="display:none;" onclick="alert('Definition: ${def}')">💡 Hint</button>
                 </span>`;
     });
